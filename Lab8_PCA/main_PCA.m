@@ -38,12 +38,11 @@ end
 % correspondiente) y dividirla entre la desviacion tipica de esa variable
 % en todos los vectores de caracteristicas
 % ====================== YOUR CODE HERE ======================
-X_noNorm = X;
-for i=1:size(X_noNorm, 2) %Se recorren las columnas
-    media_columna = mean(X(:,i)); %Se calcula la media de toda la columna
-    X(i,:) = X_noNorm(i,:) - media_columna; %Se resta todo el vector
-end
+% Se calculan media y desviacion de los datos 
+desviacion = std(X); 
+media = mean(X);
 
+X = (X - media)./desviacion;
 % ============================================================
 
 % 2. Calculo de la matriz de covarianza
@@ -54,20 +53,13 @@ matriz_cov = cov(X);
 % 3. Obtencion de los autovalores y autovectores de la matriz de
 % covarianza de los datos.
 % ====================== YOUR CODE HERE ======================
-[V,D] = eig(matriz_cov);
+V = eig(matriz_cov);
 % ============================================================
 
 % 4. Ordenacion de los autovectores en funcion de sus valores singulares
 % asociados de mayor a menor. 
 % ====================== YOUR CODE HERE ======================
-autoVectoresOrdenados = zeros(size(X_noNorm, 2), size(X_noNorm, 2)); %Se crea un vector para almacenar los autoVectores
-D = sort(D, 1, 'descend'); %Se aplana la matriz de autoValores para convertirla en vector
-DVec = D(1, :); %Se convierte en vector
-DVecOrd = sort(DVec, 'descend'); % Se ordena el vector
-
-for i=1: size(D, 2)
-    autoVectoresOrdenados(:,i) = V(:, DVec == DVecOrd(i));
-end
+autoVectoresOrdenados = sort(V, 'descend');
 % ============================================================
 
 
@@ -75,9 +67,9 @@ end
 % Seleccionar los k primeros autovectores (despues de ordenarlos en el
 % paso 4)
 % ====================== YOUR CODE HERE ======================
-matrizCompPrinc = zeros(size(autoVectoresOrdenados, 2), k);
+matrizCompPrinc = zeros(1, length(autoVectoresOrdenados));
 for i=1:k
-    matrizCompPrinc(:, i) = autoVectoresOrdenados(:, i);
+    matrizCompPrinc(i) = autoVectoresOrdenados(i);
 end
 % ============================================================
 
@@ -85,6 +77,7 @@ end
 % Es lo mismo que multiplicar la matriz de componentes principales por 
 % la de los datos para obtener los valores con las nuevas corrdenadas.
 % ====================== YOUR CODE HERE ======================
+matrizCompPrinc = diag(matrizCompPrinc); %Se convierte de vector a matriz para poder multiplicarlo
 DatosPCASol = X * matrizCompPrinc;
 % ============================================================
 
