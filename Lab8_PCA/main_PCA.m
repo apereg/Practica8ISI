@@ -54,14 +54,20 @@ matriz_cov = cov(X);
 % 3. Obtencion de los autovalores y autovectores de la matriz de
 % covarianza de los datos.
 % ====================== YOUR CODE HERE ======================
-e = eig(matriz_cov);
-aux = svd(matriz_cov);
+[V,D] = eig(matriz_cov);
 % ============================================================
 
 % 4. Ordenacion de los autovectores en funcion de sus valores singulares
 % asociados de mayor a menor. 
 % ====================== YOUR CODE HERE ======================
+autoVectoresOrdenados = zeros(size(X_noNorm, 2), size(X_noNorm, 2)); %Se crea un vector para almacenar los autoVectores
+D = sort(D, 1, 'descend'); %Se aplana la matriz de autoValores para convertirla en vector
+DVec = D(1, :); %Se convierte en vector
+DVecOrd = sort(DVec, 'descend'); % Se ordena el vector
 
+for i=1: size(D, 2)
+    autoVectoresOrdenados(:,i) = V(:, DVec == DVecOrd(i));
+end
 % ============================================================
 
 
@@ -69,14 +75,17 @@ aux = svd(matriz_cov);
 % Seleccionar los k primeros autovectores (despues de ordenarlos en el
 % paso 4)
 % ====================== YOUR CODE HERE ======================
-
+matrizCompPrinc = zeros(size(autoVectoresOrdenados, 2), k);
+for i=1:k
+    matrizCompPrinc(:, i) = autoVectoresOrdenados(:, i);
+end
 % ============================================================
 
 % 6. Obtenemos los nuevos datos
 % Es lo mismo que multiplicar la matriz de componentes principales por 
 % la de los datos para obtener los valores con las nuevas corrdenadas.
 % ====================== YOUR CODE HERE ======================
-DatosPCASol = X * 
+DatosPCASol = X * matrizCompPrinc;
 % ============================================================
 
 %% Ploteo del resultado de la PCA cuando k = 2
